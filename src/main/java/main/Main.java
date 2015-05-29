@@ -1,11 +1,8 @@
 package main;
 
-import model.Person;
-import utils.DbUtils;
+import controller.Crud;
+import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -13,24 +10,10 @@ import java.sql.SQLException;
  */
 public class Main {
   public static void main(String[] args) throws SQLException {
-    System.out.println(" test");
-    Connection connection = null;
-    try {
-      connection = DbUtils.establishConnection();
-
-      ResultSet resultSet = connection.createStatement().executeQuery("select * from \"Person\"");
-      while(resultSet.next()) {
-        System.out.println(" Result "+resultSet.getInt(1)+" -" +resultSet.getString(2));
-      }
-    }
-    catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-    catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      connection.close();
-    }
+    TJWSEmbeddedJaxrsServer tjws = new TJWSEmbeddedJaxrsServer();
+    tjws.setPort(8080);
+    tjws.start();
+    tjws.getDeployment().getRegistry().addPerRequestResource(Crud.class);
   }
 
 
